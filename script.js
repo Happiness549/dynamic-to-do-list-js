@@ -1,49 +1,52 @@
-  
-document.addEventListener('DOMContentLoaded', () => {
-    loadTasks();
 
-    const addButton = document.getElementById('add-task-btn');
-    addButton.addEventListener('click', () => {
-        const taskInput = document.getElementById('task-input');
-        const taskText = taskInput.value.trim();
+// ✅ Step 1: Setup Event Listener for Page Load
+document.addEventListener('DOMContentLoaded', function () {
 
-        if (taskText !== '') {
-            addTask(taskText);
-            taskInput.value = '';
-        }
-    });
-});
+  // ✅ Step 2: Select DOM Elements
+  const addButton = document.getElementById('add-task-btn');
+  const taskInput = document.getElementById('task-input');
+  const taskList = document.getElementById('task-list');
 
-function loadTasks() {
-    const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    storedTasks.forEach(taskText => addTask(taskText, false));
-}
+  // ✅ Step 3: Create the addTask Function
+  function addTask() {
+    const taskText = taskInput.value.trim();
 
-function addTask(taskText, save = true) {
-    const taskList = document.getElementById('task-list');
+    // ✅ Step 4: Check if taskText is not empty
+    if (taskText === '') {
+      alert('Please enter a task.');
+      return;
+    }
+
+    // ✅ Step 5: Task Creation and Removal
     const li = document.createElement('li');
     li.textContent = taskText;
 
-    const removeBtn = document.createElement('button');
-    removeBtn.textContent = 'Remove';
-    removeBtn.className = 'remove-btn';
-    removeBtn.addEventListener('click', () => {
-        taskList.removeChild(li);
-        removeTaskFromStorage(taskText);
-    });
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.className = 'remove-btn';
 
-    li.appendChild(removeBtn);
+    removeButton.onclick = function () {
+      taskList.removeChild(li);
+    };
+
+    li.appendChild(removeButton);
     taskList.appendChild(li);
 
-    if (save) {
-        const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        storedTasks.push(taskText);
-        localStorage.setItem('tasks', JSON.stringify(storedTasks));
-    }
-}
+    // ✅ Step 6: Clear the input field
+    taskInput.value = '';
+  }
 
-function removeTaskFromStorage(taskText) {
-    let storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    storedTasks = storedTasks.filter(task => task !== taskText);
-    localStorage.setItem('tasks', JSON.stringify(storedTasks));
-}
+  // ✅ Step 7: Attach Event Listeners
+  addButton.addEventListener('click', addTask);
+
+  taskInput.addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+      addTask();
+    }
+  });
+
+  // ✅ Step 8: Invoke the addTask function on DOMContentLoaded (optional)
+  // Uncomment the line below if you'd like to run it automatically at page load
+  // addTask();
+
+});
